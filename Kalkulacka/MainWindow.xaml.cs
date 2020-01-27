@@ -20,7 +20,7 @@ namespace Kalkulacka
         enum Operator { plus, minus, krat, deleno }
         Operator ope;
         double pCislo;
-        double dCislo = 0;
+        double dCislo;
         double vysledek;
         public MainWindow()
         {
