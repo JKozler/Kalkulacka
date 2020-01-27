@@ -15,15 +15,12 @@ using System.Windows.Shapes;
 
 namespace Kalkulacka
 {
-    /// <summary>
-    /// Interakční logika pro MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         enum Operator { plus, minus, krat, deleno }
         Operator ope;
         double pCislo;
-        double dCislo;
+        double dCislo = 0;
         double vysledek;
         public MainWindow()
         {
@@ -172,12 +169,15 @@ namespace Kalkulacka
                 }
                 if (e.Key == Key.Escape)
                 {
-                    pCislo = 0;
-                    dCislo = 0;
-                    Result.Content = "0";
+                    Button_Click_1(sender, e);
                 }
             }
             
+        }
+
+        private void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+            lbReuslts.Items.Clear();
         }
     }
 }
