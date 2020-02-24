@@ -22,6 +22,7 @@ namespace Kalkulacka
         double pCislo;
         double dCislo;
         double vysledek;
+        int posCislice;
         public MainWindow()
         {
             InitializeComponent();
@@ -34,6 +35,7 @@ namespace Kalkulacka
             {
                 Result.Content = "";
                 Result.Content = btn.Content;
+                posCislice = Convert.ToInt32(btn.Content);
             }
             else
             {
@@ -171,6 +173,10 @@ namespace Kalkulacka
                 {
                     Button_Click_1(sender, e);
                 }
+                if (e.Key == Key.Back)
+                {
+                    Button_Click_5(sender, e);
+                }
             }
             
         }
@@ -178,6 +184,17 @@ namespace Kalkulacka
         private void Button_Click_4(object sender, RoutedEventArgs e)
         {
             lbReuslts.Items.Clear();
+        }
+
+        private void Button_Click_5(object sender, RoutedEventArgs e)
+        {
+            string s = Result.Content.ToString();
+            Result.Content = "";
+            char[] ci = s.ToCharArray();
+            for (int i = 0; i < ci.Length - 1; i++)
+            {
+                Result.Content += Convert.ToString(ci[i]);
+            }
         }
     }
 }
