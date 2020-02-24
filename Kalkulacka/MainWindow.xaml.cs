@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -22,7 +23,8 @@ namespace Kalkulacka
         double pCislo;
         double dCislo;
         double vysledek;
-        int posCislice;
+        double plCislo = 0.0;
+        double bnCislo = 0.0;
         public MainWindow()
         {
             InitializeComponent();
@@ -35,7 +37,6 @@ namespace Kalkulacka
             {
                 Result.Content = "";
                 Result.Content = btn.Content;
-                posCislice = Convert.ToInt32(btn.Content);
             }
             else
             {
@@ -49,27 +50,51 @@ namespace Kalkulacka
             pCislo = 0;
             dCislo = 0;
         }
+        public static double Evaluate(string expression)
+        {
+            DataTable table = new DataTable();
+            table.Columns.Add("expression", string.Empty.GetType(), expression);
+            DataRow row = table.NewRow();
+            table.Rows.Add(row);
+            return double.Parse((string)row["expression"]);
+        }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             Button btn = (Button)sender;
             if (btn.Content.ToString() == "+")
             {
-                pCislo = Convert.ToDouble(Result.Content);
+                pCislo = Convert.ToDouble(Result.Content) + plCislo;
                 Result.Content = "0";
                 ope = Operator.plus;
+                plCislo = pCislo - bnCislo;
+                bnCislo = Convert.ToDouble(Result.Content);
             }
             else if (btn.Content.ToString() == "-")
             {
-                pCislo = Convert.ToDouble(Result.Content);
+                pCislo = plCislo - Convert.ToDouble(Result.Content);
                 Result.Content = "0";
                 ope = Operator.minus;
+                plCislo = pCislo - bnCislo;
+                bnCislo = Convert.ToDouble(Result.Content);
             }
             else if (btn.Content.ToString() == "*")
             {
-                pCislo = Convert.ToDouble(Result.Content);
-                Result.Content = "0";
-                ope = Operator.krat;
+                if (plCislo == 0.0)
+                {
+                    pCislo = Convert.ToDouble(Result.Content);
+                    Result.Content = "0";
+                    ope = Operator.krat;
+                    plCislo = pCislo;
+                }
+                else
+                {
+                    pCislo = Convert.ToDouble(Result.Content) * plCislo;
+                    Result.Content = "0";
+                    ope = Operator.krat;
+                    plCislo = pCislo;
+                }
+                
             }
             else if (btn.Content.ToString() == "/")
             {
@@ -77,7 +102,6 @@ namespace Kalkulacka
                 Result.Content = "0";
                 ope = Operator.deleno;
             }
-
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
@@ -87,7 +111,9 @@ namespace Kalkulacka
                 dCislo = Convert.ToDouble(Result.Content);
                 vysledek = pCislo + dCislo;
                 Result.Content = vysledek;
-                lbReuslts.Items.Add(pCislo + " + " + dCislo + " = " + vysledek); 
+                lbReuslts.Items.Add(pCislo + " + " + dCislo + " = " + vysledek);
+                bnCislo = 0.0;
+                plCislo = 0.0;
             }
             else if (ope == Operator.minus)
             {
@@ -95,6 +121,8 @@ namespace Kalkulacka
                 vysledek = pCislo - dCislo;
                 Result.Content = vysledek;
                 lbReuslts.Items.Add(pCislo + " - " + dCislo + " = " + vysledek);
+                bnCislo = 0.0;
+                plCislo = 0.0;
             }
             else if (ope == Operator.krat)
             {
@@ -143,31 +171,24 @@ namespace Kalkulacka
                 if (e.Key == Key.Decimal) Result.Content = Result.Content + ",";
                 if (e.Key == Key.Subtract)
                 {
-                    pCislo = Convert.ToDouble(Result.Content);
-                    Result.Content = "0";
-                    ope = Operator.minus;
+                    Result.Content += "-";
                 }
                 if (e.Key == Key.Add)
                 {
-                    pCislo = Convert.ToDouble(Result.Content);
-                    Result.Content = "0";
-                    ope = Operator.plus;
+                    Result.Content += "+";
                 }
                 if (e.Key == Key.Divide)
                 {
-                    pCislo = Convert.ToDouble(Result.Content);
-                    Result.Content = "0";
-                    ope = Operator.deleno;
+                    Result.Content += "/";
                 }
                 if (e.Key == Key.Multiply)
                 {
-                    pCislo = Convert.ToDouble(Result.Content);
-                    Result.Content = "0";
-                    ope = Operator.krat;
+                    Result.Content += "*";
                 }
                 if (e.Key == Key.Enter)
                 {
-                    Button_Click_3(sender, e);
+                    lbReuslts.Items.Add(Result.Content + " = " + Evaluate(Result.Content.ToString()));
+                    Result.Content = Evaluate(Result.Content.ToString());
                 }
                 if (e.Key == Key.Escape)
                 {
